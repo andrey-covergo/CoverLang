@@ -65,15 +65,27 @@ give benefit 'Retractive Eye exam'
 ";
         
         [Fact]
-        public void Given_coverLang_empty_plan_When_parse_Then_produce_empty_result()
+        public void Given_coverLang_empty_plan_with_single_quoted_name_When_parse_Then_produce_empty_result()
         {
 
             var coverLang = @"
 Plan 'Scheme 2'
 ";
-            var parsed = new CoverLangParser().ParsePlan(coverLang);
+            var parsed = CoverLangGrammar.Plan.Parse(coverLang);
             parsed.Name.Should().Be("Scheme 2");
         }   
+        
+        [Fact]
+        public void Given_coverLang_empty_plan_with_mono_name_When_parse_Then_produce_empty_result()
+        {
+
+            var coverLang = @"
+Plan Scheme2
+";
+            var parsed = CoverLangGrammar.Plan.Parse(coverLang);
+            parsed.Name.Should().Be("Scheme2");
+        }   
+
         
         
         [Fact]
@@ -83,15 +95,62 @@ Plan 'Scheme 2'
             var coverLang = @"
 Plan 'Scheme 2'
 ";
-            var plan = CoverLangGrammar.Identifier.Parse(coverLang);
+            var plan = CoverLangGrammar.MonoIdentifier.Parse(coverLang);
             plan.Should().Be("Plan");
+        } 
+        
+        [Fact]
+        public void Given_coverLang_empty_plan_When_parse_plan_identifier_Then_find_Plan_token()
+        {
+
+            var coverLang = @"
+Plan 'Scheme 2'
+";
+            var plan = CoverLangGrammar.PlanIdentifier.Parse(coverLang);
+            plan.Should().Be("Plan");
+        } 
+        
+        [Fact]
+        public void Given_coverLang_invalid_plan_When_parse_identifier_Then_exception()
+        {
+
+            var coverLang = @"
+PlanT 'Scheme 2'
+";
+            FluentActions.Invoking(() => CoverLangGrammar.PlanIdentifier.Parse(coverLang))
+                .Should().Throw<ParseException>();
         }
     }
 
 
     public class CoverLangGrammar
     {
-        public static readonly Parser<string> Identifier = Parse.Letter.AtLeastOnce().Text().Token();
+        public static readonly Parser<string> MonoIdentifier = Parse.Letter.AtLeastOnce().Text().Token();
+
+        public static readonly Parser<string> PlanIdentifier =
+            from text in Parse.Letter.AtLeastOnce().Text().Token() where text == "Plan" select text;
+       
+
+        public static readonly Parser<string> QuotedText =
+            (from open in Parse.Char('"')
+                from content in Parse.CharExcept('"').Many().Text()
+                from close in Parse.Char('"')
+                select content).Token();
+        
+        public static readonly Parser<string> SingleQuotedText =
+            (from open in Parse.Char('\'')
+                from content in Parse.CharExcept('\'').Many().Text()
+                from close in Parse.Char('\'')
+                select content).Token();
+        
+        public static readonly Parser<string> Identifier =
+            from token in MonoIdentifier.Or(SingleQuotedText) 
+            select token;
+        
+        public static readonly Parser<Plan> Plan =
+                        from planToken in PlanIdentifier
+                        from name in Identifier
+                        select new Plan{Name = name};
     }
     public class CoverLangParser
     {
