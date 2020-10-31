@@ -42,27 +42,43 @@ namespace CoverLang
 
         public static class AttributeGrammar
         {
-            public const string HasKeywordSection = "'has keyword section'";
-            public const string RequiredSection = "'require section'";
-            public const string AttributeSection = "'attribute section'";
-            public const string NameSection = "'attribute name section'";
-            public const string DataTypeSection = "'attribute data type section'";
+            public static class Parts
+            {
+                public const string HasKeyword = "'has' keyword";
+                public const string RequiredKeyword = "'require' keyword";
+                public const string AttributePart = "'attribute' keyword";
+                public const string NamePart = "attribute name";
+                public const string DataTypePart = "'attribute data type'";
+            }
         }
         
         public static readonly Parser<Attribute> Attribute =
-            (from hasKeyWord in Token("has").Named(AttributeGrammar.HasKeywordSection)
-                from optional in (Token("optional").Return(true).Or(Token("required").Return(false))).Named(AttributeGrammar.RequiredSection)
-                from attributeKeyword in Token("attribute").Named(AttributeGrammar.AttributeSection)
-                from name in Identifier.Named(AttributeGrammar.NameSection)
-                from dataType in DataType.Named(AttributeGrammar.DataTypeSection)
+            (from hasKeyWord in Token("has").Named(AttributeGrammar.Parts.HasKeyword)
+                from optional in (Token("optional").Return(true).Or(Token("required").Return(false))).Named(AttributeGrammar.Parts.RequiredKeyword)
+                from attributeKeyword in Token("attribute").Named(AttributeGrammar.Parts.AttributePart)
+                from name in Identifier.Named(AttributeGrammar.Parts.NamePart)
+                from dataType in DataType.Named(AttributeGrammar.Parts.DataTypePart)
                 select new Attribute {IsRequired = !optional, Type = dataType, Name = name});
 
+        public static class PlanGrammar
+        {
+            public static class Parts
+            {
+                public const string PlanKeyword = "'Plan' keyword";
+                public const string Name = "plan name";
+            }
+        }
+        
         public static readonly Parser<Plan> Plan =
-            (from planToken in Token("plan")
-            from name in Identifier.Named("plan name")
-            from attributes in Attribute.Many().Named("plan attributes")
-            select new Plan {Name = name, Attributes = attributes.ToArray()});
+            from planToken in Token("plan").Named(PlanGrammar.Parts.PlanKeyword)
+            from name in Identifier.Named(PlanGrammar.Parts.Name)
+            from attributes in Attribute.XMany()
+            select new Plan {Name = name, Attributes = attributes.ToArray()};
 
+        public static class TokenGrammar
+        {
+            public static string TokenKeyword(string token) => $"token '{token}' keyword";
+        }
         public static Parser<string> Token(string token)
         {
             return 
@@ -70,7 +86,7 @@ namespace CoverLang
                 from open in Parse.Letter.AtLeastOnce().Text()
                 from rest in Parse.LetterOrDigit.Many().Text()
                 from trailing in Parse.WhiteSpace.Many()
-                select open + rest).Where(p => p.ToLower() == token).Named("token "+token);
+                select open + rest).Where(p => p.ToLower() == token).Named(TokenGrammar.TokenKeyword(token));
         }
     }
 }

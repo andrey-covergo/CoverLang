@@ -59,19 +59,13 @@ Plan 'your opportunity 5'
         {
             var coverLang = @"
 Plan 'your opportunity 5' 
- Hash required attribute start_date with type date
+ Has requiredU attribute start_date with type date
 
-
-          Hasa optional attribute start with type int
-
-
-
+          Has_a optional attribute start with type int
 ";
             var ex = CoverLangGrammar.Plan.Invoking(p=>p.Parse(coverLang))
-                          .Should().Throw<ParseException>().Subject.First();
-            
-            _output.WriteLine("Expected error raised:");
-            _output.WriteLine(ex.ToString());
+                          .Should().Throw<ParseException>()
+                          .WithMessageContaining(CoverLangGrammar.AttributeGrammar.Parts.RequiredKeyword);
         }
     }
 }

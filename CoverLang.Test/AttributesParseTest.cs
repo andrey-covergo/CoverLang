@@ -79,7 +79,7 @@ namespace CoverLang.Test
             var message = ex.ToString();
             _output.WriteLine(message);
 
-            message.Should().Contain(CoverLangGrammar.AttributeGrammar.HasKeywordSection);
+            message.Should().Contain(CoverLangGrammar.AttributeGrammar.Parts.HasKeyword);
         }
         
         [Fact]
@@ -94,7 +94,7 @@ namespace CoverLang.Test
             
             var message = ex.ToString();
             _output.WriteLine(ex.ToString());
-            message.Should().Contain(CoverLangGrammar.AttributeGrammar.RequiredSection);
+            message.Should().Contain(CoverLangGrammar.AttributeGrammar.Parts.RequiredKeyword);
         }
         
         [Fact]
@@ -109,7 +109,7 @@ namespace CoverLang.Test
             var message = ex.ToString();
             _output.WriteLine(message);
 
-            message.Should().Contain(CoverLangGrammar.AttributeGrammar.AttributeSection);
+            message.Should().Contain(CoverLangGrammar.AttributeGrammar.Parts.AttributePart);
         }
         
         [Fact]
@@ -117,14 +117,10 @@ namespace CoverLang.Test
         {
             var coverLang = @"Has optional attribute 'start date' withtype date";
             
-            var ex = CoverLangGrammar.Attribute.Invoking(p=>p.Parse(coverLang))
-                .Should().Throw<ParseException>().Subject.First();
-            
-            _output.WriteLine("Expected error raised:");
-            var message = ex.ToString();
-            _output.WriteLine(message);
-
-            message.Should().Contain(CoverLangGrammar.AttributeGrammar.DataTypeSection);
+            var ex = CoverLangGrammar.Attribute
+                .Invoking(p=>p.Parse(coverLang))
+                .Should().Throw<ParseException>()
+                         .WithMessageContaining(CoverLangGrammar.AttributeGrammar.Parts.DataTypePart);
         }
     }
 }
