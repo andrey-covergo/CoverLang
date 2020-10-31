@@ -1,11 +1,19 @@
+using System.Linq;
 using FluentAssertions;
 using Sprache;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace CoverLang.Test
 {
     public class PlanNameParseTests
     {
+        private readonly ITestOutputHelper _output;
+
+        public PlanNameParseTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
         private const string MaxLang = @"
 Plan 'Scheme 2'
     Has required Attribute 'start date' with type date 
@@ -91,8 +99,11 @@ Plan 'Scheme 2'
             var coverLang = @"
 PlanT 'Scheme 2'
 ";
-            FluentActions.Invoking(() => CoverLangGrammar.PlanToken.Parse(coverLang))
-                .Should().Throw<ParseException>();
+          var ex = FluentActions.Invoking(() => CoverLangGrammar.PlanToken.Parse(coverLang))
+                .Should().Throw<ParseException>().Subject.First();
+          
+          _output.WriteLine("Expected error raised:");
+          _output.WriteLine(ex.ToString());
         }
     }
 }
