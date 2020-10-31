@@ -72,7 +72,7 @@ namespace CoverLang
         public static readonly Parser<Plan> Plan =
             from planToken in Token("plan").Named(PlanGrammar.Parts.PlanKeyword)
             from name in Identifier.Named(PlanGrammar.Parts.Name)
-            from attributes in Attribute.XMany()
+            from attributes in Attribute.XMany().Or(Parse.LineEnd.Return(new Attribute[]{}))
             select new Plan {Name = name, Attributes = attributes.ToArray()};
 
         public static class TokenGrammar
