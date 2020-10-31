@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Sprache;
 
 namespace CoverLang.Test
@@ -17,7 +19,7 @@ namespace CoverLang.Test
             where (open+rest).ToLower() == token
             select open+rest;
         
-        public static readonly Parser<string> PlanIdentifier =
+        public static readonly Parser<string> PlanToken = 
             from text in Parse.Letter.AtLeastOnce().Text().Token() where text == "Plan" select text;
         
         public static readonly Parser<string> QuotedText =
@@ -36,17 +38,14 @@ namespace CoverLang.Test
             from token in MonoIdentifier.Or(SingleQuotedText).Or(QuotedText) 
             select token;
         
-        public static readonly Parser<string> HasKeyword =
-            from text in Parse.Letter.AtLeastOnce().Text() where text.ToLower() == "has" select text;
-
         public static readonly Parser<AttributeDataType> DataType =
             from withKeyword in Token("with")
             from typeKeyword in Token("type")
-            from typeData in Parse.Chars("int").Return(AttributeDataType.Int)
-                .Or(Parse.Chars("bool").Return(AttributeDataType.Bool))
-                .Or(Parse.Chars("string").Return(AttributeDataType.String))
-                .Or(Parse.Chars("date").Return(AttributeDataType.Date))
-            select typeData;
+            from type in  Token("int").Return(AttributeDataType.Int)
+                            .Or(Token("bool").Return(AttributeDataType.Bool))
+                            .Or(Token("string").Return(AttributeDataType.String))
+                            .Or(Token("date").Return(AttributeDataType.Date))
+            select type;
        
         public static readonly Parser<string> AttributeKeyword =
             from text in Parse.Letter.AtLeastOnce().Text().Token() where text.ToLower() == "attribute" select text;
@@ -54,15 +53,18 @@ namespace CoverLang.Test
         public static readonly Parser<Attribute> Attribute =
             from hasKeyWord in Token("has")
             from optional in Token("optional").Return(true).Or(Token("required").Return(false))
-            from attributeKeyword in AttributeKeyword
+            from attributeKeyword in Token("attribute")
             from name in Identifier
             from dataType in DataType
             select new Attribute() {IsRequired = !optional, Type = dataType, Name = name};
              
             
         public static readonly Parser<Plan> Plan =
-            from planToken in PlanIdentifier
+            from planToken in PlanToken
             from name in Identifier
-            select new Plan{Name = name};
+            //from lineEnd in Parse.LineEnd
+           // from steppedNewLine in Parse.WhiteSpace.Repeat(4).Text()
+            from attributes in Attribute.Many() 
+            select new Plan{Name = name, Attributes = attributes.ToArray()};
     }
 }

@@ -14,7 +14,7 @@ Plan 'Scheme 2'
     Has Attribute 'num of employees covered' with type int 
     Has Attribute AreAllEmployeesCovered with type bool
     Has Formula 'core pricing eligibility' returning bool as 
-if 'num of employees covered' > 10 or AreAllEmployeesCovered  then true
+        if 'num of employees covered' > 10 or AreAllEmployeesCovered  then true
 	            
 Pricing
 if 'core pricing eligibility' is true then 
@@ -86,7 +86,7 @@ Plan Scheme2
             var coverLang = @"
 Plan 'Scheme 2'
 ";
-            var plan = CoverLangGrammar.PlanIdentifier.Parse(coverLang);
+            var plan = CoverLangGrammar.PlanToken.Parse(coverLang);
             plan.Should().Be("Plan");
         } 
         
@@ -97,7 +97,7 @@ Plan 'Scheme 2'
             var coverLang = @"
 PlanT 'Scheme 2'
 ";
-            FluentActions.Invoking(() => CoverLangGrammar.PlanIdentifier.Parse(coverLang))
+            FluentActions.Invoking(() => CoverLangGrammar.PlanToken.Parse(coverLang))
                 .Should().Throw<ParseException>();
         }
     }
