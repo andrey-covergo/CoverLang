@@ -35,65 +35,59 @@ give benefit 'Full written report'
 if benefit = 'Retractive Eye exam'
 give benefit 'Retractive Eye exam'
 ";
-        
+
         [Fact]
         public void Given_coverLang_empty_plan_with_single_quoted_name_When_parse_Then_produce_empty_result()
         {
-
             var coverLang = @"
 Plan 'Scheme 2'
 ";
             var parsed = CoverLangGrammar.Plan.Parse(coverLang);
             parsed.Name.Should().Be("Scheme 2");
-        }   
-        
+        }
+
         [Fact]
         public void Given_coverLang_empty_plan_with_double_quoted_name_When_parse_Then_plan_is_parced_with_name()
         {
-
             var coverLang = @"
 Plan ""Scheme 2""
 ";
             var parsed = CoverLangGrammar.Plan.Parse(coverLang);
             parsed.Name.Should().Be("Scheme 2");
-        }   
+        }
 
-        
+
         [Fact]
         public void Given_coverLang_empty_plan_with_mono_name_When_parse_Then_produce_empty_result()
         {
-
             var coverLang = @"
 Plan Scheme2
 ";
             var parsed = CoverLangGrammar.Plan.Parse(coverLang);
             parsed.Name.Should().Be("Scheme2");
-        }   
+        }
 
         [Fact]
         public void Given_coverLang_empty_plan_When_parse_identifier_Then_find_Plan_token()
         {
-
             var coverLang = @"Plan Scheme2";
             var plan = CoverLangGrammar.MonoIdentifier.Parse(coverLang);
             plan.Should().Be("Plan");
-        } 
-        
+        }
+
         [Fact]
         public void Given_coverLang_empty_plan_When_parse_plan_identifier_Then_find_Plan_token()
         {
-
             var coverLang = @"
 Plan 'Scheme 2'
 ";
             var plan = CoverLangGrammar.PlanToken.Parse(coverLang);
             plan.Should().Be("Plan");
-        } 
-        
+        }
+
         [Fact]
         public void Given_coverLang_invalid_plan_When_parse_identifier_Then_exception()
         {
-
             var coverLang = @"
 PlanT 'Scheme 2'
 ";

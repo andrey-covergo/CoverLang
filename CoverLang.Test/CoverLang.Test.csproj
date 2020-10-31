@@ -17,7 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CoverLang\CoverLang.csproj" />
+      <ProjectReference Include="..\CoverLang.Grammar\CoverLang.Grammar.csproj" />
     </ItemGroup>
 
 </Project>
