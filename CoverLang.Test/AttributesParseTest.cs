@@ -17,20 +17,20 @@ namespace CoverLang.Test
         [Fact]
         public void Given_required_attribute_with_mono_name_When_parse_Then_recognize_all_attribute_fields()
         {
-            var coverLang = @"Has required Attribute start_date with type date";
-            var parsed = CoverLangGrammar.Attribute.Parse(coverLang);
+            var coverLang = @"required attribute start_date with type date";
+            var parsed = AttributeGrammar.Attribute.Parse(coverLang);
             parsed.Name.Should().Be("start_date");
-            parsed.Type.Should().Be(AttributeDataType.Date);
+            parsed.Type.Should().Be(CoverLangDataType.Date);
             parsed.IsRequired.Should().BeTrue();
         }
 
         [Fact]
         public void Given_optional_attribute_with_single_quoted_name_When_parse_Then_recognize_all_attribute_fields()
         {
-            var coverLang = @"Has optional Attribute 'start date' with type date";
-            var parsed = CoverLangGrammar.Attribute.Parse(coverLang);
+            var coverLang = @"optional attribute 'start date' with type date";
+            var parsed = AttributeGrammar.Attribute.Parse(coverLang);
             parsed.Name.Should().Be("start date");
-            parsed.Type.Should().Be(AttributeDataType.Date);
+            parsed.Type.Should().Be(CoverLangDataType.Date);
             parsed.IsRequired.Should().BeFalse();
         }
 
@@ -38,10 +38,10 @@ namespace CoverLang.Test
         public void
             Given_optional_attribute_with_single_quoted_name_and_whitespaces_When_parse_Then_recognize_all_attribute_fields()
         {
-            var coverLang = @"has optional Attribute 'start date' with      type    int";
-            var parsed = CoverLangGrammar.Attribute.Parse(coverLang);
+            var coverLang = @"optional attribute 'start date' with      type    int";
+            var parsed = AttributeGrammar.Attribute.Parse(coverLang);
             parsed.Name.Should().Be("start date");
-            parsed.Type.Should().Be(AttributeDataType.Int);
+            parsed.Type.Should().Be(CoverLangDataType.Int);
             parsed.IsRequired.Should().BeFalse();
         }
 
@@ -49,10 +49,10 @@ namespace CoverLang.Test
         public void
             Given_optional_attribute_with_double_quoted_name_and_whitespaces_When_parse_Then_recognize_all_attribute_fields()
         {
-            var coverLang = @"has optional    Attribute    ""start date"" with      type    bool";
-            var parsed = CoverLangGrammar.Attribute.Parse(coverLang);
+            var coverLang = @"optional    attribute    ""start date"" with      type    bool";
+            var parsed = AttributeGrammar.Attribute.Parse(coverLang);
             parsed.Name.Should().Be("start date");
-            parsed.Type.Should().Be(AttributeDataType.Bool);
+            parsed.Type.Should().Be(CoverLangDataType.Bool);
             parsed.IsRequired.Should().BeFalse();
         }
 
@@ -60,67 +60,47 @@ namespace CoverLang.Test
         public void
             Given_required_attribute_with_double_quoted_name_and_whitespaces_When_parse_Then_recognize_all_attribute_fields()
         {
-            var coverLang = @"has   required    Attribute    ""start date"" with      type    string";
-            var parsed = CoverLangGrammar.Attribute.Parse(coverLang);
+            var coverLang = @"required    attribute    ""start date"" with      type    string";
+            var parsed = AttributeGrammar.Attribute.Parse(coverLang);
             parsed.Name.Should().Be("start date");
-            parsed.Type.Should().Be(AttributeDataType.String);
+            parsed.Type.Should().Be(CoverLangDataType.String);
             parsed.IsRequired.Should().BeTrue();
         }
         
-        [Fact]
-        public void Given_bad_has_keyword_attribute_When_parse_Then_raise_an_error()
-        {
-            var coverLang = @"Hasa optional Attribute 'start date' with type date";
-            
-            var ex = CoverLangGrammar.Attribute.Invoking(p=>p.Parse(coverLang))
-                .Should().Throw<ParseException>().Subject.First();
-            
-            _output.WriteLine("Expected error raised:");
-            var message = ex.ToString();
-            _output.WriteLine(message);
-
-            message.Should().Contain(CoverLangGrammar.AttributeGrammar.Parts.HasKeyword);
-        }
         
         [Fact]
         public void Given_bad_requires_keyword_attribute_When_parse_Then_raise_an_error()
         {
-            var coverLang = @"Has optio_nal Attribute 'start date' with type date";
-            
-            var ex = CoverLangGrammar.Attribute.Invoking(p=>p.Parse(coverLang))
-                .Should().Throw<ParseException>().Subject.First();
-            
-            _output.WriteLine("Expected error raised:");
-            
-            var message = ex.ToString();
-            _output.WriteLine(ex.ToString());
-            message.Should().Contain(CoverLangGrammar.AttributeGrammar.Parts.RequiredKeyword);
+            var coverLang = @"optio_nal attribute 'start date' with type date";
+
+            var ex = AttributeGrammar.Attribute.Invoking(p => p.Parse(coverLang))
+                .Should().Throw<ParseException>();
         }
         
         [Fact]
         public void Given_bad_attribute_keyword_attribute_When_parse_Then_raise_an_error()
         {
-            var coverLang = @"Has optional tttribute 'start date' with type date";
+            var coverLang = @"optional tttribute 'start date' with type date";
             
-            var ex = CoverLangGrammar.Attribute.Invoking(p=>p.Parse(coverLang))
+            var ex = AttributeGrammar.Attribute.Invoking(p=>p.Parse(coverLang))
                 .Should().Throw<ParseException>().Subject.First();
             
             _output.WriteLine("Expected error raised:");
             var message = ex.ToString();
             _output.WriteLine(message);
 
-            message.Should().Contain(CoverLangGrammar.AttributeGrammar.Parts.AttributePart);
+            message.Should().Contain(AttributeGrammar.Parts.AttributeKeyword);
         }
         
         [Fact]
         public void Given_bad_data_type_keyword_attribute_When_parse_Then_raise_an_error()
         {
-            var coverLang = @"Has optional attribute 'start date' withtype date";
+            var coverLang = @"optional attribute 'start date' with_type date";
             
-            var ex = CoverLangGrammar.Attribute
+            AttributeGrammar.Attribute
                 .Invoking(p=>p.Parse(coverLang))
                 .Should().Throw<ParseException>()
-                         .WithMessageContaining(CoverLangGrammar.AttributeGrammar.Parts.DataTypePart);
+                         .WithMessageContaining(AttributeGrammar.Parts.TypeKeyword);
         }
     }
 }

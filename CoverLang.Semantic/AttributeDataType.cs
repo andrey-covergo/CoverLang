@@ -1,6 +1,6 @@
 namespace CoverLang
 {
-    public enum AttributeDataType
+    public enum CoverLangDataType
     {
         Date,
         Int,

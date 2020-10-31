@@ -6,16 +6,11 @@ using Xunit.Abstractions;
 
 namespace CoverLang.Test
 {
-    public class PlanNameParseTests
-    {
-        private readonly ITestOutputHelper _output;
 
-        public PlanNameParseTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
+    public class CoverGoLangExamples
+    {
         
-        private const string MaxLang = @"
+        public const string Bupa = @"
 #this is a comment 
 #this is a CoverLang representation of BUPA insurance example 
 #https://www.figma.com/file/VP1mP2JDpdarkoJdbvXWAH/Bupa?node-id=248%3A127688
@@ -48,6 +43,16 @@ Benefits
     if benefit = 'Retractive Eye exam'
         give benefit 'Retractive Eye exam'
 ";
+    }
+    public class PlanNameParseTests
+    {
+        private readonly ITestOutputHelper _output;
+
+        public PlanNameParseTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+  
 
         [Fact]
         public void Given_coverLang_empty_plan_with_single_quoted_name_When_parse_Then_produce_empty_result()
@@ -55,7 +60,7 @@ Benefits
             var coverLang = @"
 Plan 'Scheme 2'
 ";
-            var parsed = CoverLangGrammar.Plan.Parse(coverLang);
+            var parsed = PlanGrammar.Plan.Parse(coverLang);
             parsed.Name.Should().Be("Scheme 2");
         }
 
@@ -65,7 +70,7 @@ Plan 'Scheme 2'
             var coverLang = @"
 Plan ""Scheme 2""
 ";
-            var parsed = CoverLangGrammar.Plan.Parse(coverLang);
+            var parsed = PlanGrammar.Plan.Parse(coverLang);
             parsed.Name.Should().Be("Scheme 2");
         }
 
@@ -76,7 +81,7 @@ Plan ""Scheme 2""
             var coverLang = @"
 Plan Scheme2
 ";
-            var parsed = CoverLangGrammar.Plan.Parse(coverLang);
+            var parsed = PlanGrammar.Plan.Parse(coverLang);
             parsed.Name.Should().Be("Scheme2");
         }
 
@@ -89,22 +94,12 @@ Plan Scheme2
         }
 
         [Fact]
-        public void Given_coverLang_empty_plan_When_parse_plan_identifier_Then_find_Plan_token()
-        {
-            var coverLang = @"
-Plan 'Scheme 2'
-";
-            var plan = CoverLangGrammar.PlanToken.Parse(coverLang);
-            plan.Should().Be("Plan");
-        }
-
-        [Fact]
         public void Given_coverLang_invalid_plan_When_parse_identifier_Then_exception()
         {
             var coverLang = @"
 PlanT 'Scheme 2'
 ";
-          var ex = FluentActions.Invoking(() => CoverLangGrammar.PlanToken.Parse(coverLang))
+          var ex = FluentActions.Invoking(() => PlanGrammar.Plan.Parse(coverLang))
                 .Should().Throw<ParseException>().Subject.First();
           
           _output.WriteLine("Expected error raised:");
