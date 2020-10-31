@@ -1,6 +1,6 @@
 using System;
 
-namespace CoverLang.Test
+namespace CoverLang
 {
     public class CoverLangParser
     {

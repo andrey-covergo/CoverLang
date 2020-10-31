@@ -1,8 +1,7 @@
-using System.Collections.Generic;
 using System.Linq;
 using Sprache;
 
-namespace CoverLang.Test
+namespace CoverLang
 {
     public class CoverLangGrammar
     {

@@ -1,4 +1,4 @@
-namespace CoverLang.Test
+namespace CoverLang
 {
     public class Formula:CoverLangNode
     {

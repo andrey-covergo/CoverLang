@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-
-namespace CoverLang.Test
+namespace CoverLang
 {
     public class Plan
     {
