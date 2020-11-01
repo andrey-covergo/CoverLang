@@ -22,13 +22,17 @@ namespace CoverLang
                 select content;
 
         public static readonly Parser<string> Identifier =
-           // from leading in Parse.WhiteSpace.Many()
             from token in MonoIdentifier.XOr(SingleQuotedText).XOr(QuotedText)
             select token;
 
+
+        public static readonly Parser<string> Indent = Parse.WhiteSpace.Repeat(4).Text();
+        public static readonly Parser<string> EmptyLineEnd = Parse.WhiteSpace.Until(Parse.LineEnd).Text();
+
+        
         public static readonly Parser<string> NestedIndent = 
-             from newLine in Parse.WhiteSpace.Until(Parse.LineEnd)
-             from indent in Parse.WhiteSpace.Repeat(4).Text()
+             from newLine in EmptyLineEnd
+             from indent in Indent
              select indent;
             
         public static readonly Parser<CoverLangDataType> DataType =
