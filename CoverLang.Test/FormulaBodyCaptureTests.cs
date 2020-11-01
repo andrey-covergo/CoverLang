@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using FluentAssertions;
 using Sprache;
@@ -7,22 +6,6 @@ using Xunit.Abstractions;
 
 namespace CoverLang.Test
 {
-
-    public class FormulaSignatureParseTests
-    {
-        [Fact]
-        public void Given_formula_signature_only_When_Parse_Then_signature_is_correct()
-        {
-            var coverlang = @"formula 'core pricing eligibility' returning bool as";
-
-            var formula = FormulaGrammar.FormulaDefinition.Parse(coverlang);
-
-            formula.Name.Should().Be("core pricing eligibility");
-            formula.ReturnDataType.Should().Be(CoverLangDataType.Bool);
-        }
-    }
-    
-    
     public class FormulaBodyCaptureTests
     {
         private readonly ITestOutputHelper _output;
@@ -36,7 +19,7 @@ namespace CoverLang.Test
         {
             var coverlang = @"formula 'core pricing eligibility' returning bool as";
 
-             FormulaGrammar.Formula.Invoking(f =>f.Parse(coverlang))
+            FormulaGrammar.Formula.Invoking(f =>ParserExtensions.Parse<Formula>(f, coverlang))
                 .Should().Throw<ParseException>().WithMessageContaining(FormulaGrammar.Parts.Body);
         }
         

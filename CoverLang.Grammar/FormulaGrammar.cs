@@ -3,10 +3,9 @@ using Sprache;
 
 namespace CoverLang
 {
+    
     public static class FormulaGrammar
     {
-
-
         public static class Parts
         {
             public const string FormulaKeyword = "'formula' keyword";
@@ -16,10 +15,7 @@ namespace CoverLang
                 
             public const string Name = "formula name";
             public static string Body = "formula body";
-            public static string BodyIdent = "formula body ident";
         }
-        
-        
         
 
         public static readonly Parser<FormulaSignature> FormulaDefinition =
@@ -38,5 +34,12 @@ namespace CoverLang
             select new Formula {Name = definition.Name, 
                                 BodyLines = bodyLines.ToArray(), 
                                 ReturnDataType = definition.ReturnDataType};
+
+        public static readonly Parser<IfStatement> IfStatement = null;
+        public static readonly Parser<ValueExpression> ValueExpressionStatement = null;
+        public static readonly Parser<Return> ReturnStatement = null;
+     
+        
+        
     }
 }

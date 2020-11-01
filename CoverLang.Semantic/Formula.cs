@@ -1,10 +1,28 @@
 using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Runtime.InteropServices;
 
 namespace CoverLang
 {
+    public class FormulaPart
+    {
+        public string[] Lines { get; set; }
+    }
+
+    public class IfStatement : FormulaPart
+    {
+        
+    }
+
+    public class ValueExpression : FormulaPart
+    {
+        public Operand[] Operands { get; set; }
+        
+    }
+    
+    public class Return : FormulaPart
+    {
+        
+    }
+
     public class FormulaSignature
     {
         public string Name { get; set; }
@@ -17,6 +35,8 @@ namespace CoverLang
         public CoverLangDataType ReturnDataType { get; set; }
         public string Body => string.Join(Environment.NewLine, BodyLines);
         public string[] BodyLines { get; set; }
+
+        private FormulaPart[] Parts { get; set; }
 
         public object Execute(CalculationContext context)
         {
@@ -34,10 +54,10 @@ namespace CoverLang
         }
     }
 
-    public interface Operand
+    public class Operand
     {
-        public string Name { get;}
-        public CoverLangDataType Type { get;}
-        public object GetValue();
+        public string Name { get; set; }
+        public CoverLangDataType Type { get; set; }
+      //  public object GetValue();
     }
 }
