@@ -56,6 +56,10 @@ namespace CoverLang
 
     public class Operand
     {
+        public Operand(string name, CoverLangDataType type)
+        {
+            //Name = 
+        }
         public string Name { get; set; }
         public CoverLangDataType Type { get; set; }
       //  public object GetValue();
